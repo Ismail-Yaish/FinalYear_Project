@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Http\Controllers\BookingController;
 
+
 class StripeController extends Controller
 {
     public function checkout($booking)
@@ -46,7 +47,17 @@ class StripeController extends Controller
 
     public function success($booking)
     {
-        // Redirect back to the seeker dashboard with success message
-        return redirect()->route('posts.poster-bookings')->with('accepted', 'Payment Successful! Your Tasker will be notified of the payment shortly.');
+        $booking = Booking::findOrFail($booking);
+        
+        // Update the status of the booking to PAID and Save
+        $booking->status = 'PAID';
+        $booking->save();
+
+
+        // Redirect to the ratings page for the seeker associated with the booking
+        return redirect()->route('posts.ratings.show', ['seeker' => $booking->seeker_id])->with('accepted', 'Payment Successful! Your Tasker will be notified of the payment shortly.');
+
+
+
     }
 }

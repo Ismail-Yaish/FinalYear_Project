@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 
 use App\Models\JobPoster;
+use TCG\Voyager\Models\DataType as VoyagerDataType;
+use App\Models\Post;
 
 class Booking extends Model
 {
     use HasFactory;
+
 
     protected $table = 'bookings';
 
@@ -21,6 +24,7 @@ class Booking extends Model
         'status',
         'offer_price',
         'accepted_price',
+        'decline_reason', #Newly added column
         'booking_date',
         'description',
         'address',

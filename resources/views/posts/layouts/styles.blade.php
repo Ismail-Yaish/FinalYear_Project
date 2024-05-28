@@ -1,6 +1,6 @@
 <!-- styles.blade.php -->
 	{{-- CSS Styles --}}
-	<style>
+	{{-- <style>
 
 		@import url(https://fonts.googleapis.com/css?family=Hind);
 		@import url(https://fonts.googleapis.com/css?family=Open+Sans);
@@ -297,4 +297,4 @@
 		
 		
 
-		</style>
+		</style> --}}

@@ -41,7 +41,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'phone' => ['required', 'string', 'min:7', 'max:20', 'regex:/^[0-9()+]+$/'], //  phone number validation
             'address' => ['nullable', 'string', 'min:5', 'regex:/^[A-Za-z0-9\s\-\.,]+$/'], //  address validation
-            'role_id' => ['required', Rule::in([1, 3, 4])], // Validation for role_id
+            'role_id' => ['required', Rule::in([3, 4])], // Validation for role_id
         ]);
 
         $user = User::create([
@@ -57,6 +57,14 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        // return redirect(RouteServiceProvider::HOME);
+
+        // Set message based on the selected role
+        $message = $request->role_id == 3 ? 'Welcome! You have been registered as a Poster' : 'Welcome! You have been registered as a Seeker';
+
+        // Redirect based on the selected role
+        $redirectUrl = $request->role_id == 3 ? '/posts' : ($request->role_id == 4 ? '/seeker/dashboard' : '/');
+
+        return redirect($redirectUrl)->with('success', $message);
     }
 }

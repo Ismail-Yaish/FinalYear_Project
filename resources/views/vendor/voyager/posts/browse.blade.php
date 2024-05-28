@@ -5,8 +5,7 @@
 @section('page_header')
     <div class="container-fluid">
         <h1 class="page-title">
-            {{-- <i class="{{ $dataType->icon }}"></i> {{ $dataType->getTranslatedAttribute('display_name_plural') }} --}}
-            YOUR POSTS
+            <i class="{{ $dataType->icon }}"></i> {{ $dataType->getTranslatedAttribute('display_name_plural') }}
         </h1>
         @can('add', app($dataType->model_name))
             <a href="{{ route('voyager.'.$dataType->slug.'.create') }}" class="btn btn-success btn-add-new">
@@ -40,7 +39,6 @@
 {{-- Users Only ABLE to view their own posts --}}
 {{-- PS. Need to make it so that THEY CANT access admin stuffs --}}
 {{-- After that log their posts --}}
-<h1><strong>YOUR POSTS</strong></h1>
 
 @section('content')
     <div class="page-content browse container-fluid">

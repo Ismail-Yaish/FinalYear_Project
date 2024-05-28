@@ -55,4 +55,23 @@ class User extends \TCG\Voyager\Models\User
     {
         return $this->hasMany(Booking::class);
     }
+
+
+    public function isAdmin()
+    {
+        return $this->role_id === 1;
+    }
+
+
+    # RATINGS RELATED:
+
+    public function ratingsGiven()
+    {
+        return $this->hasMany(Rating::class, 'poster_id');
+    }
+
+    public function ratingsReceived()
+    {
+        return $this->hasMany(Rating::class, 'seeker_id');
+    }
 }

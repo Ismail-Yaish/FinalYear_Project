@@ -72,7 +72,7 @@ class ProfileController extends Controller
     };
 
     // Redirect the user to the appropriate route
-    return Redirect::to($redirectRoute)->with('status', 'Your Profile has been Updated!');
+    return Redirect::to($redirectRoute)->with('success', 'Your Profile has been Updated!');
 }
 
     /**
@@ -93,10 +93,10 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/dashboard');
+        return Redirect::to('/dashboard')->with('success', 'Your Profile has been Deleted!');
     }
 
-    public function PosterProfile()       // Function to view the Profile of the Authenticated Seeker
+    public function PosterProfile()       // Function to view the Profile of the Authenticated Poster - POSTER DASHBOARD
     {
         $id = Auth::user()->id;
         $profileData = User::find($id);
@@ -104,12 +104,51 @@ class ProfileController extends Controller
         return view ('posts.poster-profile-view',compact('profileData'));
     }
 
-    public function SeekerProfile()     // Function to view the Profile of the Authenticated Seeker
+    public function SeekerProfile()     // Function to view the Profile of the Authenticated Seeker - SEEKER DASHBOARD
     {
         $id = Auth::user()->id;
         $profileData = User::find($id);
 
         return view ('seeker.seeker-profile-view',  compact('profileData'));
+    }
+
+    public function PosterProfile_Seeker($postId = null)     // Function to view the Profile of an Poster - SEEKER DASHBOARD
+    {
+        // If $postId is null, it means the seeker is viewing their own profile
+        if (!$postId) {
+            // Retrieve the authenticated user's profile data
+            $profileData = Auth::user();
+    
+            // Return the view with the seeker's profile data
+            return view('seeker.seeker-profile-view', compact('profileData'));
+        }
+        
+        // Retrieve the post based on the provided author ID
+        $post = Post::where('author_id', $postId)->first();
+    
+        // Check if the post exists
+        if ($post) {
+            // Retrieve the user who created the post
+            $poster = $post->author;
+            
+            // Check if the retrieved user exists and has the role of a poster
+            if ($poster && in_array($poster->role_id, [1, 2, 3])) {
+                // Retrieve profile data of the poster
+                $profileData = $poster;
+    
+                // Retrieve the booking related to the post
+                $booking = Booking::where('post_id', $post->id)->first();
+    
+                // Return the view with the poster's profile data and booking information
+                return view('seeker.profile', compact('profileData', 'booking'));
+            } else {
+                // Redirect or display an error message if the user is not a poster
+                return redirect()->route('seeker.dashboard')->with('error', 'The specified user is not a poster.');
+            }
+        } else {
+            // Redirect or display an error message if the post does not exist
+            return redirect()->route('seeker.dashboard')->with('error', 'The specified post does not exist.');
+        }
     }
 
     public function ProfileView_Seeker($postId = null)    
@@ -151,7 +190,7 @@ class ProfileController extends Controller
         }
     }
 
-    public function ProfileView_Poster($postId)     // Function to view the profile of the poster who posted the post in poster dashboard
+    public function ProfileView_Poster($postId)     // Function to view the profile of the poster who posted the post in POSTER dashboard
     {
         // Retrieve the post based on the provided author ID
         $post = Post::where('author_id', $postId)->first();
@@ -200,27 +239,26 @@ class ProfileController extends Controller
         return view('posts.seeker-profile-view', compact('profileData'));
     }
 
-    // public function viewClientProfileFromBooking($bookingId)  // View the profile of Poster(Client) in Booking Tab from Seeker Dashboard - REDACTED
-    // {
-    //     // Retrieve the booking
-    //     $booking = Booking::findOrFail($bookingId);
+    # NEW - View the profile of Client(Poster) from My Bookings in SEEKER DASHBOARD
+    public function viewClientProfileFromBooking($bookingId)    
+    {
+        // Retrieve the booking
+        $booking = Booking::findOrFail($bookingId);
         
-    //     // Retrieve the seeker who made the booking
-    //     $poster = $booking->poster;
+        // Retrieve the seeker who made the booking
+        $poster = $booking->poster;
         
-    //     // Check if the poster exists
-    //     if (!$poster) {
-    //         return response()->json(['error' => 'poster not found'], 404);
-    //     }
+        // Check if the poster exists
+        if (!$poster) {
+            return response()->json(['error' => 'poster not found'], 404);
+        }
         
-    //     // Retrieve the associated user data
-    //     $profileData = $poster;
-
-    //     // Debug
-    //     // dd($profileData);
-        
-    //     return view('seeker.seeker-profile-view', compact('profileData'));
-    // }
+        // Retrieve the associated user data
+        $profileData = $poster;
+    
+        return view('seeker.seeker-profile-view', compact('profileData', 'booking'));
+    }
+    
 
 
 }

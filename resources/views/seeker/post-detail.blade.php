@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    @include('seeker.layouts.bootstrap')
+    @include('seeker.layouts.head')
 
-    @include('seeker.layouts.styles')
+    <title>BRIDGES - Post Details</title>
 
-    <title>View Post</title>
+
 </head>
 
 <body>
@@ -17,59 +14,73 @@
     @include('seeker.layouts.navbar')
 
 
+{{-- Single Post Detail Start --}}
+<section>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-10 offset-md-1">
+                <h2 class="card-title">Post Details:</h2>
+                <hr>
+                <br>
+                    <div class="card-body">
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                {{-- Title --}}
+                                <h4 class="card-title">{{ $post->title }}</h4>
+                                {{-- Published by --}}
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    Published by: <a href="{{ route('profile.view', ['postId' => $post->author_id]) }}">{{ strip_tags($post->author->name) }}</a>
+                                </h6>
+                                <br><br>
+                                {{-- Body --}}
+                                <p class="card-text">{{ strip_tags($post->body) }}</p>
+                                <br><br>
+                                {{-- Category --}}
+                                <p class="card-text"><strong>Category: <span style="font-weight: normal;">{{ $post->category->name }}</span></strong></p>
+                                {{-- Status --}}
+                                <p class="card-text"><strong>Status: <span style="font-weight: normal;">{{ $post->status }}</span></strong></p>
+                                <hr class="my-2">
+                                {{-- Created Date --}}
+                                <p class="card-text"><strong>Created Date: {{ $post->created_at }}</strong></p>
+                                
+                                {{-- Buttons --}}
+                                {{-- RIGHT BUTTONS --}}
+                                <div class="buttons float-md-end mt-4">
+                                    <div class="d-flex align-items-center">
+                                        {{-- View Profile Button --}}
+                                        <a href="{{ route('profile.view', ['postId' => $post->author_id]) }}" class="btn btn-dark me-3">View Profile</a>
+                                        {{-- BOOK THIS TASK BUTTON --}}
+                                        <a href="{{ route('seeker.booking', ['postId' => $post->id]) }}" class="btn btn-primary btn-lg">BOOK THIS TASK</a>
+                                    </div>
+                                </div>
 
-{{-- Singe Post Detail --}}
-<div class="container mt-5" style="margin-bottom: 200px">
-    <h2>Post Detail:</h2>
-    <hr>
-        <section>
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-10 offset-md-1">
-                        <div class="content">
-                            <h4 class="job-title">
-                                Title: {{ $post->title }}
-                            </h4>
-                            <h5 class="company">
-                                Published by: {{ $post->author->name }}
-                            </h5>
-                            {{-- Body --}}
-                            <p><b>Description:-</b></p>
-                            <p>{{ $post->body }}</p>
-                            <p><b>Category: </b> {{ $post->category->name }}</p>
-                            <p><b>Status: </b>  {{ $post->status }}</p>
-                            <hr>
-                            <p><b>Created Date: </b>  {{ $post->created_at }}</p>
+                                <div class="clearfix"></div>
+                            </div>
                         </div>
-
-                        @if ($post->author_id == auth()->id())
-                        {{-- Edit & Delete Form  --}}
-                        <div class="buttons float-md-end">
-    
-                            <a href="{{route('posts.edit', ['post' => $post])}}" class="btn btn-apply">Edit</a>
-                            
-                            <form id="deleteForm{{$post->id}}" method="post" action="{{route('posts.destroy', ['post' => $post ])}}" class="d-inline-block">
-                                @csrf
-                                @method('delete')
-                                <button type="button" onclick="confirmDelete({{$post->id}})" class="btn btn-apply">Delete</button>
-                            </form>
-                        </div>
-                        @endif
-
                     </div>
-                </div>
             </div>
-        </section>
-    <hr>
-</div>
+        </div>
+    </div>
+</section>
+{{-- Single Post Detail End --}}
 
-@include('seeker.layouts.footer')
 
-@include ('seeker.layouts.scripts')
+
+    @include('seeker.layouts.footer')
+
+
+
+    @include('seeker.layouts.scripts')
+
+{{-- Additional JavaScript --}}
+<script>
+    function confirmDelete(postId) {
+    if (confirm("Are you sure you want to delete this post?")) {
+        document.getElementById('deleteForm' + postId).submit();
+    }
+}
+</script>
+
 
 </body>
 </html>
-
-
-
-

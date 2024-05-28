@@ -1,12 +1,7 @@
-{{-- BootStrap 5.3.3 --}}
-
-{{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> --}}
-
-
-{{-- HEADER --}}
-<header class="masthead text-center">
+{{--  Header Start  --}}
+<header class="masthead text-center mt-2">
     <div class="container">
-        <div class="row"> <!-- Center the row -->
+        <div class="row"> 
             <div class="col-md-10 offset-md-1">
                 <div class="site-heading">
                     <h1 class="heading">
@@ -17,19 +12,29 @@
                         '{{ Auth::user()->name }}'
                     </h2>
                     <br>
+                    <br>
                     <span class="subheading larger-font" style="font-size: 1.5rem; margin-bottom: 10px">
-                        TO GET STARTED, CHOOSE A POST AVAILABLE BELOW:
+                        Available Categories:
                     </span>
-                        {{-- Create Post Section --}}
-                            <div class="container">
-                                <div class="row justify-content-center align-items-center">
-                                    <div class="col-md-6 text-center">
-                                        <a class="btn btn-success btn-lg" style=" font-size: 1.5rem; margin-bottom: 10px; text-decoration: none" href="#">CLICK THIS TO BOOK A CLIENT</a>
-                                    </div>
-                                </div>
+                    <div class="d-flex flex-wrap justify-content-center align-items-center">
+                        @foreach ($categories as $category)
+                            <div class="col-md-auto mb-2 me-2">
+                                <a class="btn btn-outline-dark fs-5 fw-bold scroll-to-middle" href="#">{{ $category->name }}</a>
                             </div>
+                        @endforeach 
+                    </div>
+                    <div class="d-flex flex-wrap justify-content-center align-items-center">
+                        <div class="col-md-auto mt-5">
+                            <a href="#" class="btn btn-outline-secondary scroll-to-middle"> <i class="fa fa-arrow-down" aria-hidden="true"></i> 
+                                Select a Post Below</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </header>
+{{--  Header End  --}}
+
+{{-- <!-- Back to Top --> --}}
+<a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a>

@@ -1,20 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	{{-- Include meta tags --}}
-	@include('seeker.layouts.meta')
-	
-    {{-- Include Boostrap --}}
-    @include('seeker.layouts.bootstrap')
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    @include('seeker.layouts.head')
+
+    <title>BRIDGES - Seeker Dashboard</title>
 
 
-	{{-- Include CSS Styles --}}
-	@include('seeker.layouts.styles')
 
-
-    <title>Seeker Dashboard</title>
 
 </head>
 
@@ -28,93 +21,95 @@
     @include ('seeker.layouts.header')
 
 
+{{-- Displayed Posts Section --}}
+<section id="posts-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 offset-md-1 mt-4">
+                <h2 class="card-title">Current Active Posts</h2>
+                <hr>
+                    {{-- Pagination Links --}}
+                    <div id="pagination-links" class="d-flex justify-content-end pagination-links">
+                        {{ $posts->links() }}
+                    </div>
+                <br>
 
-    {{-- Create Post Section --}}
-    {{-- <section>
-        <div class="container">
-            <div class="row justify-content-center align-items-center border">
-                <div class="col-md-6 text-center">
-                    <button class="btn btn-primary" style="background-color: #73a5fc" onclick="redirectToCreatePostPage()">Create Your Task</button>
-                </div>
-            </div>
-        </div>
-    </section> --}}
-
-    {{-- Success Message on Edit --}}
-    @if (session('success'))
-    <div class="alert alert-success alert-dismissible fixed-top w-100" role="alert" id="successAlert">
-        {{ session('success') }}
-
-    </div>
-    <script>
-        // Automatically close the alert after 5 seconds
-        setTimeout(function() {
-            document.getElementById('successAlert').style.display = 'none';
-        }, 3000); // Adjust the time as needed (in milliseconds)
-    </script>
-    @endif
-
-    {{-- Error Message on Un-Authenticated User Edit --}}
-    @if (session('error'))
-    <div class="alert alert-danger alert-dismissible fixed-top w-100" role="alert" id="error">
-        {{ session('error') }}
-
-    </div>
-    <script>
-        // Automatically close the alert after 5 seconds
-        setTimeout(function() {
-            document.getElementById('error').style.display = 'none';
-        }, 3000); // Adjust the time as needed (in milliseconds)
-    </script>
-    @endif
-
-
-
-    {{-- Displayed Posts Section --}}
-    <section>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-10 offset-md-1">
-                    <div><h2>Current Active Posts</h2></div>
-                    <ul class="job-list">
+                {{-- Posts Container --}}
+                <div id="posts-container">
+                    <div class="card-body">
                         @foreach ($posts as $post)
-                        <li class="job-preview">
-                            <div class="content">
-                                <h4 class="job-title">
-                                    {{ $post->title }}
-                                </h4>
-                                <h5 class="company">
-                                    Published by: <a href="{{ route('profile.view.seeker', ['postId' => $post->author_id]) }}"> {{ strip_tags($post->author->name) }} </a>
-                                </h5>
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                {{-- Save Button --}}
+                                <div class="buttons float-md-end ">
+                                    <a href="" class="save-link text-decoration-none">
+                                        <i class="far fa-heart"></i> Save
+                                    </a>
+                                </div>
+                                {{-- Title --}}
+                                <h4 class="card-title">{{ $post->title }}</h4>
+                                {{-- Published by --}}
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    Published by: <a href="{{ route('profile.view.seeker', ['postId' => $post->author_id]) }}">{{ strip_tags($post->author->name) }}</a>
+                                </h6>
+                                <br><br>
                                 {{-- Body --}}
-                                <h6> {{ strip_tags($post->body) }} </h6>    
-                                <h6>Category: {{ $post->category->name}}</h6>
-                                <p>Status: <u> {{ $post->status }} </u></p>
-                                <hr>
-                                <br>
-                                <p>Created Date: {{ $post->created_at }}</p>
-                            </div>
+                                <p class="card-text">{{ strip_tags($post->body) }}</p>
+                                <br><br>
+                                {{-- Category --}}
+                                <p class="card-text"><strong>Category: <span style="font-weight: normal;">{{ $post->category->name }}</span></strong></p>
+                                {{-- Status --}}
+                                <p class="card-text"><strong>Status: <span style="font-weight: normal;">{{ $post->status }}</span></strong></p>
+                                <hr class="my-2">
+                                {{-- Created Date --}}
+                                <p class="card-text"><strong>Created Date: {{ $post->created_at }}</strong></p>
 
-                            {{-- BOOK THIS TASK BUTTON --}}
-                            <div class="buttons float-md-end">
-                                <a href="{{ route('profile.view.seeker', ['postId' => $post->author_id]) }}" class="btn btn-apply"> View Profile </a>
-                                <a href="{{ route('seeker.booking', ['postId' => $post->id]) }}" class="btn btn-success btn-lg">BOOK THIS TASK</a>
-                            </div>
-                            <div class="clearfix"></div>
-                        </li>
+                                {{-- Buttons --}}
+
+                                {{-- RIGHT BUTTONS --}}
+                                <div class="buttons float-md-end mt-4">
+                                    <div class="d-flex align-items-center">
+                                        {{-- View Profile Button --}}
+                                        <a href="{{ route('profile.view', ['postId' => $post->author_id]) }}" class="btn btn-dark me-3">View Profile</a>
+                                        {{-- BOOK THIS TASK BUTTON --}}
+                                        <a href="{{ route('seeker.booking', ['postId' => $post->id]) }}" class="btn btn-primary btn-lg">BOOK THIS TASK</a>
+                                    </div>
+                                </div>
+
+                                {{-- View Post Detail Button --}}
+                                <div class="buttons float-md-start mt-4">
+                                    <a href="{{ route('seeker.view.post', ['postId' => $post->id]) }}" class="btn btn-dark">View Post</a>
+                                </div>
+
+                                <div class="clearfix"></div>
+
+                            </div><hr>
+                        </div><hr>
                         @endforeach
-                    </ul>
+
+                        {{-- Pagination Links --}}
+                        <div id="pagination-links" class="d-flex justify-content-end pagination-links">
+                            {{ $posts->links() }}
+                        </div>
+
+                    </div>
                 </div>
+
+
             </div>
         </div>
-    </section>
+    </div>
+</section>
+{{-- End Displayed Posts --}}  
 
     {{-- Include Footer --}}
-    @include ('posts.layouts.footer')
+    @include('seeker.layouts.footer')
 
 
     {{-- Include Scripts --}}
-    @include ('posts.layouts.scripts')
+    @include('seeker.layouts.scripts')    
+
+
 
 </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\StripeController;
+
 use TCG\Voyager\Facades\Voyager;
 use Illuminate\Support\Facades\Route;
 
@@ -9,6 +9,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\StripeController;
+use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\RatingController;
+
 
 use Illuminate\Support\Facades\Auth;
 
@@ -25,8 +29,24 @@ use Illuminate\Support\Facades\Auth;
 
 #laravel.blade.php
 Route::get('/', function () {
-    return view('welcome');
+    return view('frontend.home');
 });
+
+# FRONT END - START
+Route::get('/home', [TemplateController::class,'index'])->name('home');
+
+Route::get('/about', function () {
+    return view('frontend.about');
+})->name('about');
+
+Route::get('/service', function () {
+    return view('frontend.service');
+})->name('service');
+
+Route::get('/feature', function () {
+    return view('frontend.feature');
+})->name('feature');
+# FRONT END - END
 
 #dashboard.blade.php
 Route::get('/dashboard', function () {
@@ -109,19 +129,24 @@ Route::middleware(['auth', 'role:1,2,3'])->group(function () {
     Route::post('accept_booking/{id}', [BookingController::class, 'accept_booking'])->name('accept_booking');
 
     # Reject Booking Route
-    Route::get('reject_booking/{id}', [BookingController::class, 'reject_booking']
-    );     
+    Route::post('reject_booking/{id}', [BookingController::class, 'reject_booking'])->name('reject_booking');
+  
+    
+    # Cancel Booking Route
+    Route::get('cancel_booking/{id}', [BookingController::class, 'cancel_booking']
+    ); 
 
     // View Profile of selected Poster
     Route::get('/poster/profile/view/{postId}', [ProfileController::class, 'ProfileView_Poster'])->name('profile.view.poster');
 
-    
     // Route to View Selected Post - from Poster Dashboard
     Route::get('/posts/view/{postId}', [PostController::class, 'view'])->name('posts.view');
 
     // Route to  view the selected Seeker profile within Poster dashboard
     Route::get('/posts/view-seeker-profile/{bookingId}', [ProfileController::class, 'viewSeekerProfileFromBooking'])->name('posts.view.seeker.profile');
 
+
+        # -------------------------------------------------POSTER NOTIFICATIONS---------------------------------------
     # Notifications - Mark ALL as Read 
     Route::get('/poster/notifications/markAsRead', [NotificationController::class, 'posterMarkAllNotificationAsRead'])->name('posts.notifications.markAsReadAll');
 
@@ -132,6 +157,11 @@ Route::middleware(['auth', 'role:1,2,3'])->group(function () {
     Route::get('/posts/checkout/{booking}', [StripeController::class, 'checkout'])->name('checkout');
     Route::post('/posts/session/{booking}', [StripeController::class, 'session'])->name('session');
     Route::get('/posts/success/{booking}', [StripeController::class, 'success'])->name('success');
+
+    # RATINGS
+    Route::post('/posts/ratings/{seeker}', [RatingController::class, 'store'])->name('posts.ratings.store');
+    Route::get('/posts/ratings/{seeker}', [RatingController::class, 'show'])->name('posts.ratings.show');
+
 
 
 
@@ -147,7 +177,7 @@ Route::middleware(['auth', 'role:1,4'])->group(function () {
     // Make Booking Navigation
     Route::get('/seeker/make-booking', function () {
         return view('seeker.booking');
-    })->middleware(['auth', 'verified'])->name('seeker.booking');
+    })->middleware(['auth', 'verified']);
 
     # Bookings
     Route::post('/seeker/bookings/create/{postId}', [BookingController::class, 'create'])->name('bookings.create');
@@ -172,6 +202,9 @@ Route::middleware(['auth', 'role:1,4'])->group(function () {
     //  Mark Bookings as Completed
     Route::post('/seeker/bookings/{booking}/markcompleted', [BookingController::class, 'markCompleted'])->name('bookings.markcompleted');
 
+    # Cancel Booking Route
+    Route::post('cancel_booking/{id}', [BookingController::class, 'cancel_booking']
+    )->name('bookings.cancel');; 
 
     // Route to handle form deletion to delete data in database
     Route::delete('/seeker/{booking}/destroy', [BookingController::class,'destroy'])->name('bookings.destroy');
@@ -186,15 +219,20 @@ Route::middleware(['auth', 'role:1,4'])->group(function () {
     // Route to seeker profile edit - TEST - NOT FULLY IMPLEMETNED - MAYB LATER
     Route::get('/seeker/edit-profile', [ProfileController::class, 'edit'])->name('profile.edit-profile');   
     
-
+    // Route to  view the selected Seeker profile within SEEKER dashboard
     Route::get('/seeker/profile/view/{postId}', [ProfileController::class, 'ProfileView_Seeker'])->name('profile.view.seeker');
+
+    // Normal Profile View with Seeker dashboard
+    Route::get('/seeker/profile/{postId}', [ProfileController::class, 'PosterProfile_Seeker'])->name('profile.view');
 
     // Route to View Selected Post - from Seeker Dashboard
     Route::get('/seeker/view/{postId}', [PostController::class, 'viewClientPost'])->name('seeker.view.post');
 
-    // Route to  view the selected Client profile within Seeker dashboard
-    // Route::get('/seeker/view-client-profile/{bookingId}', [ProfileController::class, 'viewClientProfileFromBooking'])->name('seeker.view.client.profile');
+    // Route to view the selected Poster profile within SEEKER dashboard
+    Route::get('/seeker/profile/view-poster/{bookingId}', [ProfileController::class, 'viewClientProfileFromBooking'])->name('seeker.profile.view.poster');
 
+
+    # -------------------------------------------------SEEKER NOTIFICATIONS---------------------------------------
     # Notifications - Mark ALL as Read 
     Route::get('/seeker/notifications/markAsRead', [NotificationController::class, 'seekerMarkAllNotificationAsRead'])->name('seeker.notifications.markAsReadAll');
 
@@ -205,6 +243,10 @@ Route::middleware(['auth', 'role:1,4'])->group(function () {
     Route::get('/seeker/add-skills', function () {
         return view('seeker.addskills');
     })->middleware(['auth', 'verified'])->name('seeker.add-skills');    
+
+        # RATINGS
+        // Route::post('ratings/{seeker}', [RatingController::class, 'store'])->name('posts.ratings.store');
+        Route::get('/seeker/ratings/{seeker}', [RatingController::class, 'show_ratings_seeker'])->name('seeker.ratings.show');
         
 });
 

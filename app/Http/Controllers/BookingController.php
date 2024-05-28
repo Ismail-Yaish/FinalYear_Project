@@ -20,6 +20,9 @@ use App\Notifications\BookingMade;
 use App\Notifications\BookingAccepted;
 use App\Notifications\BookingRejected;
 
+use Illuminate\Support\Facades\Gate;
+use App\Policies\BookingPolicy;
+
 
 class BookingController extends Controller
 {
@@ -41,7 +44,7 @@ class BookingController extends Controller
         // Validate the incoming request
         $request->validate([
             'post_id' => 'required|exists:posts,id',
-            'status' => 'required|in:PENDING,ACCEPTED,DECLINED,TASK-COMPLETED,CANCELLED',
+            'status' => 'required|in:PENDING,ACCEPTED,DECLINED,TASK-COMPLETED,CANCELLED, PAID',
             'offer_price' => 'required|numeric',
             'accepted_price' => 'nullable|numeric',
             'booking_date' => 'required|date',
@@ -93,13 +96,30 @@ class BookingController extends Controller
         return view('seeker.booking', compact('post'));
     }
 
+    // public function edit($id)       # Edit the Booking
+    // {
+    //     // Find the booking by its ID
+    //     $booking = Booking::findOrFail($id);
+    
+    //     // Check if the authenticated user is the author of the booking
+    //     if(Auth::user()->id !== $booking->seeker_id) {
+    //         // Redirect unauthorized users
+    //         return redirect()->route('seeker.my-bookings')->with('error', 'You are not authorized to edit this booking.');
+    //     }
+        
+    //     // Pass the $booking variable to the view
+    //     return view('seeker.edit-booking', compact('booking'));
+    // }
+
+
+    # OLD EDIT - Using Laravel Gate
     public function edit($id)
     {
         // Find the booking by its ID
         $booking = Booking::findOrFail($id);
     
-        // Check if the authenticated user is the author of the booking
-        if(Auth::user()->id !== $booking->seeker_id) {
+        // Check if the authenticated user is authorized to edit this booking
+        if (Gate::denies('edit', $booking)) {
             // Redirect unauthorized users
             return redirect()->route('seeker.my-bookings')->with('error', 'You are not authorized to edit this booking.');
         }
@@ -127,11 +147,12 @@ class BookingController extends Controller
             'status'=> 'nullable',
         ]);
 
+        // Set accepted_price back to 0 - whenever an update is made after decline
+        $data['accepted_price'] = 0;
+
         $booking->update($data);
 
         return redirect(route('seeker.my-bookings'))->with('success', 'Booking Updated Successfully!');
-
-        
 
     }
 
@@ -153,6 +174,27 @@ class BookingController extends Controller
     
         return redirect()->back()->with('success', 'You have marked TASK-COMPLETED. Client will be notified to make payment');
     }
+
+    // public function cancel_booking($booking) #Change status of booking to CANCELLED - Seeker Dashboard
+    // {
+    //     $booking = Booking::findOrFail($booking);
+        
+    //     // Check if the authenticated user is the seeker of the booking
+    //     if(Auth::user()->id !== $booking->seeker_id) {
+    //         // Redirect unauthorized users
+    //         return redirect()->route('seeker.my-bookings')->with('error', 'You are not authorized to mark this booking as cancelled');
+    //     }
+    
+    //     // Update the status of the booking to COMPLETED
+    //     $booking->status = 'CANCELLED';
+    
+    //     // Save the changes
+    //     $booking->save();
+    
+    //     return redirect()->back()->with('success', 'You have CANCELLED this booking. Your Client will be Notified right away.');
+    // }
+
+
 
     public function destroy(Booking $booking)   # Destroy / Remove / Cancel Booking
     {
@@ -231,11 +273,29 @@ class BookingController extends Controller
         return redirect()->back()->with('accepted', 'You Have Accepted Your Booking! Your Tasker has been Notified.');
     }
 
-    public function reject_booking($id) //Reject Booking Function
+    // public function reject_booking($id) //Reject Booking Function
+    // {
+    //     $data = Booking::find($id);
+
+    //     $data->status='DECLINED';
+
+    //     // Set the accepted_price to null
+    //     $data->accepted_price = null;
+
+    //     $data->save();
+
+    //     // Notify the seeker that their booking has been rejected
+    //     $data->seeker->notify(new BookingRejected($data));
+
+    //     return redirect()->back()->with('declined', 'You Have Declined your Booking. Your Tasker has been Notified.');
+    // }
+
+    public function reject_booking(Request $request, $id)   # Reject the booking - Poster dashboard function
     {
         $data = Booking::find($id);
 
         $data->status='DECLINED';
+        $data->decline_reason = $request->input('decline_reason');
 
         // Set the accepted_price to null
         $data->accepted_price = null;
@@ -247,90 +307,29 @@ class BookingController extends Controller
 
         return redirect()->back()->with('declined', 'You Have Declined your Booking. Your Tasker has been Notified.');
     }
+
+    public function cancel_booking(Request $request, $booking) #Change status of booking to CANCELLED - Seeker Dashboard function
+    {
+        $booking = Booking::findOrFail($booking);
+
+        // Check if the authenticated user is the seeker of the booking
+        if(Auth::user()->id !== $booking->seeker_id) {
+            // Redirect unauthorized users
+            return redirect()->route('seeker.my-bookings')->with('error', 'You are not authorized to mark this booking as cancelled');
+        }
+
+        // Update the status of the booking to CANCELLED and add the decline_reason
+        $booking->status = 'CANCELLED';
+        $booking->decline_reason = $request->input('decline_reason');
+
+        // Save the changes
+        $booking->save();
+
+        // Notify the client that their booking has been cancelled
+        // $booking->client->notify(new BookingCancelled($booking)); // Make sure you have a BookingCancelled notification
+
+        return redirect()->back()->with('success', 'You have CANCELLED this booking. Your Client will be notified right away.');
+    }
+
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// OLD
-
-
-// {
-//     // Create a new Booking Req
-//     public function create(Request $request, $postId)
-//     {
-//          // Display the contents of the request for debugging
-//          dd($request->all());  
-
-        
-//         // Find the post
-//         $post = Post::findOrFail($postId);
-
-//         // Determine the poster_id based on the role
-//         $posterId = Auth::user()->role_id === 3 ? Auth::id() : $post->user_id;
-
-//         // Determine the seeker_id based on the role
-//         $seekerId = Auth::user()->role_id === 4 ? Auth::id() : null;
-
-//         //Validate the incoming request
-//         $request->validate([
-//             // 'poster_id' => 'required|exists:users,id',
-//             // 'seeker_id' => 'required|exists:users,id',
-//             'post_id' => 'required|exists:posts,id',
-//             'status' => 'required|in:pending,accepted,declined',
-//             'offer_price' => 'required|numeric',
-//             'accepted_price' => 'nullable|numeric',
-//             'booking_date' => 'required|date',
-//             'description' => 'nullable|string',
-//             'address' => 'nullable|string',
-//             // Addtional validation if needed
-//         ]);
-
-
-//         //Create Booking instance
-//         $booking = new Booking([
-//             'offer_price' => $request->offer_price,
-//             'booking_date' => $request->booking_date,
-//             'description' => $request->description,
-//             'status' => 'pending',
-//             'post_id' => $postId, // Correct variable name
-//             'poster_id' => $posterId,
-//             'seeker_id' => $seekerId,
-//             // 'user_id' => Auth::id(), // Set the user_id as the currently authenticated user
-//         ]);
-
-//         // Save the booking to the database
-//         $booking->save();
-        
-//         // Redirect or return a response
-         
-//     }
-
-//     //Booking Form
-//     public function showBookingForm($postId)
-//     {
-//         $post = Post::findOrFail($postId);
-//         return view('seeker.booking', compact('post'));
-//     }
-
-
-// }

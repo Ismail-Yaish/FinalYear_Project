@@ -1,51 +1,36 @@
+{{-- THIS IS THE POSTER PROFILE VIEW WITHIN POSTER DASHBOARD --}}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {{-- Include meta tags --}}
-    @include('posts.layouts.meta')
 
-    {{-- Bootstrap 5.3.3 --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    {{-- Icons --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    @include('posts.layouts.head')
 
-    {{-- Include CSS Styles --}}
-    @include('posts.layouts.styles')
+    <title>BRIDGES - Poster Profile</title>
 
-    <title>Your Profile</title>
 </head>
+
+
 <body>
-    {{-- Include Navbar --}}
-    @include ('posts.layouts.navbar')
 
-    {{-- Success Message on Edit --}}
-    @if (session('status'))
-    <div class="alert alert-success alert-dismissible fixed-top w-100" role="alert" id="successAlert">
-        {{ session('status') }}
+    @include('posts.layouts.navbar')
 
-    </div>
-    <script>
-        // Automatically close the alert after 5 seconds
-        setTimeout(function() {
-            document.getElementById('successAlert').style.display = 'none';
-        }, 3000); // Adjust the time as needed (in milliseconds)
-    </script>
-    @endif
 
-{{-- Profile Content --}}
+{{-- Poster Profile Content Start --}}
 <div class="container mt-5">
     <div class="row justify-content-center">
         @if(Auth::check() && Auth::id() === $profileData->id)
-        <div class="col-md-8"> <h1> Your Profile: </h1>
+        <div class="col-md-8 mb-3"> <h1> Your Profile: </h1>
         @else
-        <div class="col-md-8"> <h1> Profile: </h1>
+        <div class="col-md-8 mb-3"> <h1> Profile: </h1>
         @endif
-            <div class="card rounded">
+            <div class="card rounded mt-4">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
                         <img class="wd-100 rounded-circle me-3" src="{{ (!empty($profileData->avatar)) ? url('upload/user_images/default.png') : url('upload/no_image.jpg') }}" alt="profile">
-                        <div>
-                            <label class="tx-11 fw-bolder mb-2 text-uppercase">{{ $profileData->name ?? '[empty]' }}</label>
+                        <div class="card-title ms-3">
+                            <label class="fs-3 fw-bolder mb-3 text-uppercase"><span>{{ $profileData->name ?? '[empty]' }}</span></label>
+                            <br>
                             @if($profileData->role_id == 1)
                                 <p class="text-muted mb-0"><b>Role: </b><u>Admin</u></p>
                             @elseif($profileData->role_id == 3)
@@ -62,56 +47,84 @@
                 </div>
                 <div class="card-body">
                     <div class="mt-5">
-                        <label class="tx-11 fw-bolder  text-uppercase">Email:</label>
+                        <label class="tx-11 fw-bolder fw-bold text-uppercase mb-2"><u>Email:</u></label>
                         <p class="text-muted mb-4">{{ $profileData->email ?? '[empty]' }}</p>
                     </div>
                     <hr>
                     @if(Auth::check() && Auth::id() === $profileData->id)
                     <div class="mt-4">
-                        <label class="tx-11 fw-bolder  text-uppercase">Address:</label>
+                        <label class="tx-11 fw-bolder text-uppercase mb-2"><u>Password:</u></label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" value="{{ substr($profileData->password, 0, 16) }}" readonly>
+                            <span class="input-group-text" id="password-toggle" style="cursor: pointer;"><i class="fa fa-eye"></i></span>
+                        </div>
+                    </div>
+                    @endif                                                                          
+                    <hr>
+                    @if(Auth::check() && Auth::id() === $profileData->id)
+                    <div class="mt-4">
+                        <label class="tx-11 fw-bolder text-uppercase mb-2"><u>Address:</u></label>
                         <p class="text-muted mb-4">{{ $profileData->address ?? '[empty]' }}</p>
                     </div>
                     <hr>
                     <div class="mt-4">
-                        <label class="tx-11 fw-bolder  text-uppercase">Phone:</label>
+                        <label class="tx-11 fw-bolder text-uppercase mb-2"><u>Phone:</u></label>
                         <p class="text-muted mb-4">{{ $profileData->phone ?? '[empty]' }}</p>
                     </div>
                     @else
                     <div class="mt-4">
-                        <label class="tx-11 fw-bolder  text-uppercase">Address:</label>
+                        <label class="tx-11 fw-bolder text-uppercase mb-2"><u>Address:</u></label>
                         <p class="text-muted mb-4">[Address of User Hidden]</p>
                     </div>
                     <div class="mt-4">
-                        <label class="tx-11 fw-bolder  text-uppercase">Phone:</label>
+                        <label class="tx-11 fw-bolder text-uppercase mb-2"><u>Phone:</u></label>
                         <p class="text-muted mb-4">[Phone of User Hidden]</p>
                     </div>
                     @endif
                     <hr>
                     <div class="mt-4">
-                        <label class="tx-11 fw-bolder  text-uppercase">Joined:</label>
+                        <label class="tx-11 fw-bolder text-uppercase mb-2"><u>Joined:</u></label>
                         <p class="text-muted mb-4">{{ $profileData->created_at ?? '[empty]' }}</p>
                     </div>
                     <hr>
-                    @if(Auth::check() && Auth::id() === $profileData->id)
+                    {{-- @if(Auth::check() && Auth::id() === $profileData->id)
                     <div class="mt-4">
-                        <label class="tx-11 fw-bolder  text-uppercase">Skills:</label>
+                        <label class="tx-11 fw-bolder text-uppercase mb-2"><u>Skills:</u></label>
                         <p class="text-muted mb-4">[none]</p>
                     </div>
-                    @endif
+                    @endif --}}
                 </div>
             </div>
         </div>
     </div>
 </div>
+</div>
+{{-- Poster Profile Content End --}}
+
+    @include('posts.layouts.footer')
 
 
 
+    @include('posts.layouts.scripts')
 
+    {{-- Additional Scripts --}}
+    <script>
+        const togglePassword = document.getElementById('password-toggle');
+        const passwordField = document.querySelector('input[type="password"]');
+    
+        togglePassword.addEventListener('click', function () {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+    </script>
+    
+    
+    
+    
+    
+    
 
-    {{-- Include Footer --}}
-    @include ('posts.layouts.footer')
-
-    {{-- Include Scripts --}}
-    @include ('posts.layouts.scripts')
 </body>
 </html>

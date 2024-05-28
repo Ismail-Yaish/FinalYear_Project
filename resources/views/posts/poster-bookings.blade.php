@@ -1,155 +1,181 @@
-{{-- Poster Bookings Page --}}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {{-- Include meta tags --}}
-    @include('posts.layouts.meta')
 
-    {{-- Include Bootstrap 5.3.3 --}}
-    @include('posts.layouts.bootstrap')
+    @include('posts.layouts.head')
 
-    {{-- Include CSS Styles --}}
-	@include('posts.layouts.styles')
+    <title>BRIDGES - Bookings</title>
 
-
-    <title>My Bookings</title>
 </head>
+
+
 <body>
-    {{-- Include Navbar --}}
-    @include ('posts.layouts.navbar')
 
-    {{-- Message on Accept --}}
-    @if (session('accepted'))
-    <div class="alert alert-success alert-dismissible fixed-top w-100" role="alert" id="acceptAlert">
-        {{ session('accepted') }}
+    @include('posts.layouts.navbar')
 
-    </div>
-    <script>
-        // Automatically close the alert after 5 seconds
-        setTimeout(function() {
-            document.getElementById('acceptAlert').style.display = 'none';
-        }, 3000); // Adjust the time as needed (in milliseconds)
-    </script>
-    @endif
+    {{-- Error Messages Part of Navbar --}}
 
-    {{-- Message on Decline --}}
-    @if (session('declined'))
-    <div class="alert alert-danger alert-dismissible fixed-top w-100" role="alert" id="declineAlert">
-        {{ session('declined') }}
 
-    </div>
-    <script>
-        // Automatically close the alert after 5 seconds
-        setTimeout(function() {
-            document.getElementById('declineAlert').style.display = 'none';
-        }, 3000); // Adjust the time as needed (in milliseconds)
-    </script>
-    @endif   
-
-{{-- Displayed Bookings --}}
+{{-- Displayed Bookings Start --}}
 <section>
-    <div class="container mt-5 .container-content">
-        <div class="row" style="padding-bottom: 200px">
+    <div class="container mt-5">
+        <div class="row">
             <div class="col-md-10 offset-md-1">
-                <div><h2>Your Current Bookings</h2></div>
-                <ul class="job-list">
-                    @foreach ($bookings as $booking)
-                    <li class="job-preview">
-                        <div class="content">
-                            <h4 class="job-title">
-                                Booking No. {{$booking->id}}
-                            </h4>
-                            <h5 class="company">
-                                The Tasker  <u>'{{ $booking->seeker->name }}'</u> has made a booking to your post!
-                            </h5>
-                            <h6>Status: {{ $booking->status }}</h6>
-                            <h6>Scheduled Date: {{ $booking->booking_date }}</h6>
-                            <h6>Description: {{ strip_tags($booking->description) }}</h6>
-                            <h6>Initial Offer Price: {{ $booking->offer_price }}</h6>
-                            @if (empty($booking->accepted_price))
-                            <h6>Accepted Price: [No Price has been Offered] </h6>
-                            @else
-                            <h6>Accepted Price: {{ $booking->accepted_price }}</h6>
-                            @endif
-                            <h6>Created Date: {{ $booking->created_at }}</h6>
+                <h2 class="card-title">Your Bookings</h2>
+                <hr>
+                <br>
 
-                            {{--  View the Corresponding Post Related to the Booking --}}
-                            <div class="buttons float-md-start">
-                                <a href="{{ route('posts.view', ['postId' => $booking->post_id]) }}" class="btn btn-apply">View Post</a>
-                            </div>
-                            - 
-                            {{-- View Corresponding Profile Related to Booking --}}
-                            <div class="buttons float-md-start">
-                                <a href="{{ route('posts.view.seeker.profile', ['bookingId' => $booking->id]) }}" class="btn btn-apply">View Seeker Profile</a>
-                            </div>
-
-                            {{-- If booking status = Completed = Make Payment Gateway appear --}}
-                            @if($booking->status === 'TASK-COMPLETED')
-                                {{-- View Payment Gateway --}}
-                                <div class="buttons float-md-end">
-                                    <a href="{{ route('checkout', ['booking' => $booking->id]) }}" class="btn btn-success"> <i class="fa fa-credit-card" aria-hidden="true"></i> 
-                                    Make Payment</a>
-                                </div>
-                            @else
-                                {{-- Buttons for Status Change --}}
-                                <div class="buttons float-md-end">
-                                    <a href="#" class="btn btn-primary mr-2" onclick="showAcceptModal({{ $booking->id }})">Accept</a>
-                                    <a href="{{url('reject_booking', $booking->id)}}" class="btn btn-danger" onclick="return confirm('Are you sure you want to decline this booking?')">Decline</a>
-                                </div>
-                            @endif
+                <div class="card-body">
+                    @if ($bookings->isEmpty())
+                        <div class="text-center mt-3" style="margin-bottom: 60vh">
+                            <p class="fs-4">You have no bookings currently available.</p>
                         </div>
-                    @endforeach
-                </ul>
+                    @else
+                        @foreach ($bookings as $booking)
+                            <div class="card mb-5">
+                                <div class="card-body">
+                                    {{-- Booking No --}}
+                                    <h4 class="card-title mb-2">
+                                        Booking ID: #{{$booking->id}}
+                                    </h4>
+
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        The Tasker<span class="nav-link d-inline">'{{$booking->seeker->name}}'</span>has made a booking to your post!
+                                    </h6>
+
+                                    <br><br>
+                                    {{-- Description --}}
+                                    <p class="card-text fs-4 fw-bolder">Description:</p>
+                                    <p class="card-text">{{ strip_tags($booking->description) }}</p>
+                                    <br><br>                            
+
+                                    {{-- Status --}}
+                                    <p class="card-text"><strong class="fs-6 fw-bolder">Status: </strong><u class="fs-6 fw-normal">{{ $booking->status }}</u></p>
+
+                                    {{-- Decline Reason --}}
+                                    @if($booking->status === 'DECLINED' || $booking->status == 'CANCELLED')
+                                    {{-- Decline Reason --}}
+                                    <div class="mb-3 d-flex align-items-center">
+                                        <button class="btn btn-link toggle-reason me-2""><i class="fas fa-eye text-primary"></i></button>
+                                        <div class="reason-text d-none">
+                                            <strong class="fs-6 fw-bolder">Provided Reason:</strong>
+                                            <span>{{ $booking->decline_reason }}</span>
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                    <br class="my-5">
+                                    <hr>
+
+                                    {{-- Schedule Date --}}
+                                    <p class="card-text"><strong class="fs-6 fw-bolder">Scheduled Date: <span class="fs-6 fw-normal">{{ $booking->booking_date }}</span></strong></p>
+
+                                    {{-- Initial Offer Price --}}
+                                    <p class="card-text"><strong class="fs-6 fw-bolder">Initial Offer Price: <span class="fs-6 fw-normal">{{ $booking->offer_price }} MVR</span></strong></p>
+
+                                    {{-- Accepted Offer Price --}}
+                                    @if (empty($booking->accepted_price))
+                                        <p class="card-text"><strong class="fs-6 fw-bolder">Accepted Price: <span class="fs-6 fw-normal">[No Price has been Offered]</span></strong></p>
+                                    @else
+                                        <p class="card-text"><strong class="fs-6 fw-bolder">Accepted Price: <span class="fs-6 fw-normal">{{ $booking->accepted_price }} MVR</span></strong></p>
+                                    @endif
+
+                                    {{-- Created Date --}}
+                                    <p class="card-text fs-6 fw-bolder mb-3"><strong class="fs-6 fw-bolder">Created Date: <span class="fs-6 fw-normal">{{ $booking->created_at }}</span></strong></p>
+                                    <hr class="my-4">
+
+                                    {{-- Buttons Section Start --}}
+                                    {{--  View the Corresponding Post Related to the Booking --}}
+                                    <div class="buttons float-md-start">
+                                        <a href="{{ route('posts.view', ['postId' => $booking->post_id]) }}" class="btn btn-secondary me-2">View Post</a>
+                                    </div>
+                                    
+                                    {{-- View Corresponding Profile Related to Booking --}}
+                                    <div class="buttons float-md-start">
+                                        <a href="{{ route('posts.view.seeker.profile', ['bookingId' => $booking->id]) }}" class="btn btn-secondary ms-2">View Seeker Profile</a>
+                                    </div>
+
+                                    {{-- If booking status = Completed = Make Payment Gateway appear --}}
+                                    @if($booking->status === 'TASK-COMPLETED')
+                                        {{-- View Payment Gateway --}}
+                                        <div class="buttons float-md-end">
+                                            <a href="{{ route('checkout', ['booking' => $booking->id]) }}" class="btn btn-success"> <i class="fa fa-credit-card" aria-hidden="true"></i> 
+                                            Make Payment</a>
+                                        </div>
+                                    @elseif ($booking->status === 'ACCEPTED')
+                                        <div class="float-md-end">
+                                            <i class="fa fa-spinner"></i>
+                                            <span style="text-decoration: none;">Waiting for seeker response...</span>
+                                            <div class="buttons float-md-end">
+                                                {{-- <a href="#" class="btn btn-danger" onclick="showDeclineModal({{ $booking->id }})">Decline Instead</a> --}}
+                                            </div>
+                                        </div>
+                                    @elseif($booking->status === 'CANCELLED' || $booking->status === 'DECLINED')
+                                        <div class="buttons float-md-end mt-4">
+  
+                                                {{-- <button type="button" class="btn btn-danger"><empty></button> --}}
+
+                                        </div>
+                                    @elseif($booking->status === 'PAID')
+                                    <div class="buttons float-md-end mt-4">
+                                        <a href="{{ route('posts.ratings.show', ['seeker' => $booking->seeker_id]) }}" type="button" class="btn btn-primary"><i class="fa fa-star me-1" aria-hidden="true"></i>Rate This Seeker</a>
+                                    </div>
+                                    @else
+                                        {{-- Buttons for Status Change --}}
+                                        <div class="buttons float-md-end">
+                                            <a href="#" class="btn btn-success me-2" onclick="showAcceptModal({{ $booking->id }})">Accept</a>
+                                            {{-- <a href="{{url('reject_booking', $booking->id)}}" class="btn btn-danger" onclick="return confirm('Are you sure you want to decline this booking?')">Decline</a> --}}
+                                            <div class="buttons float-md-end">
+                                                <a href="#" class="btn btn-danger" onclick="showDeclineModal({{ $booking->id }})">Decline</a>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    {{-- Buttons Section End --}}
+                                    
+                                    {{-- Display Modal for Accept/Decline Booking --}}
+                                    @include('posts.layouts.modals')
+
+                                </div>
+                            </div>
+                        @endforeach
+                    @endif
+                </div>
             </div>
         </div>
     </div>
 </section>
+{{-- Displayed Bookings End --}}
 
-{{-- Modal for Accepting Booking --}}
-<div class="modal fade" id="acceptModal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="acceptModalLabel">Accept Booking</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ route('accept_booking', ['id' => $booking->id]) }}" method="POST">
-                @csrf
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="AcceptedPrice" class="form-label">Accepted Price</label>
-                        <input type="number" step="0.01" class="form-control" id="AcceptedPrice" name="accepted_price" placeholder="Enter accepted price" required>
-                        @error('accepted_price')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
-{{-- Include Footer --}}
-@include ('posts.layouts.footer')
+    @include('posts.layouts.footer')
 
-{{-- JavaScript to show modal --}}
+
+
+    @include('posts.layouts.scripts')
+
+{{-- Additional JavaScript - ShowModal --}}
 <script>
     function showAcceptModal(bookingId) {
         var modal = new bootstrap.Modal(document.getElementById('acceptModal'));
         document.getElementById('acceptModal').querySelector('form').action = "{{ url('accept_booking') }}/" + bookingId;
         modal.show();
     }
+
+    function showDeclineModal(bookingId) {
+        var modal = new bootstrap.Modal(document.getElementById('declineReasonModal'));
+        document.getElementById('declineReasonModal').querySelector('form').action = "{{ url('reject_booking') }}/" + bookingId;
+        modal.show();
+    }
+
+    document.querySelectorAll('.toggle-reason').forEach(button => {
+        button.addEventListener('click', () => {
+            const reasonText = button.nextElementSibling;
+            reasonText.classList.toggle('d-none');
+            button.childNodes[0].classList.toggle('fa-eye');
+            button.childNodes[0].classList.toggle('fa-eye-slash');
+        });
+    });
 </script>
-
-
-    {{-- Include Scripts --}}
-    @include ('posts.layouts.scripts')
-
 
 </body>
 </html>

@@ -159,9 +159,10 @@ return [
         /*
          * Package Service Providers...
          */
-
+        TCG\Voyager\VoyagerServiceProvider::class,
         /*
          * Application Service Providers...
+         * 
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,

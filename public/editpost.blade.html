@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>BRIDGES - Edit Task</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+	
+    <!-- Favicon -->
+    <link href="img/icon/icon-00-logo-favicon.png" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;600;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> 
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" 
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- Navbar Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" 
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+
+
+<body>
+
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status"></div>
+    </div>
+    <!-- Spinner End -->
+
+
+    <!-- Topbar Start -->
+    <div class="container-fluid bg-white text-black-50 py-2 px-0 d-none d-lg-block">
+        <div class="row gx-0 align-items-center">
+            <div class="col-lg-7 px-5 text-start">
+                <div class="h-100 d-inline-flex align-items-center me-4">
+                    <small class="fa fa-phone-alt me-2"></small>
+                    <small>+960 332-3902</small>
+                </div>
+                <div class="h-100 d-inline-flex align-items-center me-4">
+                    <small class="far fa-envelope-open me-2"></small>
+                    <small>info@bridges.com.mv</small>
+                </div>
+            </div>
+            <div class="col-lg-5 px-5 text-end">
+                <ol class="breadcrumb justify-content-end mb-0">
+                    <li class="breadcrumb-item"><a class="text-black-50 small" href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a class="text-black-50 small" href="#">Terms</a></li>
+                    <li class="breadcrumb-item"><a class="text-black-50 small" href="#">Privacy</a></li>
+                    <li class="breadcrumb-item"><a class="text-black-50 small" href="#">Support</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+
+<!-- Navbar Start -->
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark sticky-top px-4 px-lg-5">
+    <a href="index.html" class="navbar-brand d-flex align-items-center">
+        <h1 class="m-0" style="color: white;"><img class="img-fluid me-3" src="img/icon/icon-00-logo-primary.png" alt="">BRIDGES</h1>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto bg-dark pe-4 py-3 py-lg-0">
+            <!-- Navbar items to appear on the left -->
+            <a href="#" class="nav-item nav-link active">Home</a>
+            <a href="#" class="nav-item nav-link">Profile</a>
+            <a href="#" class="nav-item nav-link">My Posts</a>
+            <a href="#" class="nav-item nav-link">Bookings</a>
+
+            <!-- {{-- Dropdown Notifications --}} -->
+            <li class="nav-item dropdown">
+                <a id="navbarDropdown" href="#" class="nav-link dropdown-toggle" role="button" aria-haspopup="true">
+                    <i class="far fa-bell fa-xl"></i>
+                    <!-- @if (auth()->user()->unreadNotifications) -->
+                        <!-- Notification count -->
+                        <!-- <span class="badge bg-danger">{{ auth()->user()->unreadNotifications->count() }}</span>  -->
+                        <span class="badge bg-danger badge-sm" style="font-size: 0.6rem;">2</span>
+                    <!-- @endif -->
+                </a>
+                <div class="dropdown-menu dropdown-menu-start mt-2" aria-labelledby="navbarDropdown" style="max-height: 300px; overflow-y: auto;">
+                    <div class="dropdown-header d-flex justify-content-between align-items-center">
+                        <h6>Notifications</h6>
+                        <div style="padding: 0 0 15px 15px">
+                             <!-- Mark As read -->
+                            <!-- <a class="btn btn-sm btn-outline-danger" href="{{ route('posts.notifications.markAsReadAll')}}">Mark All As Read</a> -->
+                            <a class="btn btn-sm btn-outline-danger" href="#" style="margin-right: 15px;">Mark All As Read</a>
+                            <!-- Clear button --> 
+                            <!-- {{-- <button class="btn btn-sm btn-outline-danger" onclick="clearNotifications()">Clear All</button> --}} -->
+                            <button class="btn btn-sm btn-outline-danger" onclick="" >Clear All</button>
+                        </div>
+                    </div>
+                    <!-- @if (auth()->user()->notifications->isEmpty()) -->
+                        <!-- <a class="dropdown-item">No notifications</a> -->
+                    <!-- @else -->
+                        <!-- @foreach (auth()->user()->unreadNotifications as $notification) -->
+                            <div class="dropdown-item d-flex justify-content-between align-items-start">
+                                <div>
+                                    <!-- <span><i class="fas fa-circle text-primary me-1" style="font-size: 8px;"></i>{{ $notification->data['message'] }} - <b> Booking no. {{$notification->data['id']}}</b></span> -->
+                                    <span><i class="fas fa-circle text-primary me-1" style="font-size: 8px;"></i> Notification 1 - <b> Booking No. 32</b></span>
+                                </div>
+                                <div style="padding-left: 15px">
+                                    <!-- Mark as read button -->
+                                    <!-- <a href="{{ route('posts.notifications.markAsReadIndividual', ['id' => $notification->id]) }}" class="btn btn-sm btn-outline-primary me-2"><u>View</u></a>  -->
+                                    <a href="#" class="btn btn-sm btn-outline-primary me-2"><u>Mark Read</u></a> 
+                                    
+                                    <!-- View link -->
+                                    <!-- {{-- <a href="{{ route('seeker.my-bookings')}}" class="btn btn-sm btn-outline-secondary"><u>View</u></a> --}} -->
+                                    <a href="#" class="btn btn-sm btn-outline-secondary"><u>View</u></a>
+                                </div>
+                            </div>
+                        <!-- @endforeach -->
+                        <!-- @foreach (auth()->user()->readNotifications as $notification) -->
+                            <div class="dropdown-item d-flex justify-content-between align-items-start">
+                                <div>
+                                    <!-- <span>{{ $notification->data['message'] }} - <b> Booking no. {{$notification->data['id']}}</b></span> -->
+                                    <span>Notification 2 - <b> Booking no. 33</b></span>
+                                </div>
+                                <div style="padding-left: 15px">
+                                    <!-- Mark as read button -->
+                                    <!-- <a href="{{ route('posts.notifications.markAsReadIndividual', ['id' => $notification->id]) }}" class="btn btn-sm btn-outline-primary me-2" ><u>View</u></a>  -->
+                                    <a href="#" class="btn btn-sm btn-outline-primary me-2" ><u>Mark Read</u></a> 
+
+                                    <!-- View link -->
+                                    <!-- {{-- <a href="{{ route('seeker.my-bookings')}}" class="btn btn-sm btn-outline-secondary"><u>View</u></a>  --}} -->
+                                    <a href="#" class="btn btn-sm btn-outline-secondary"><u>View</u></a>
+                            </div>
+                        <!-- @endforeach -->
+                    <!-- @endif -->
+                </div>
+            </li>
+            <!-- {{-- Dropdown Notifications End --}} -->
+
+            <!-- Logout Button -->
+            <a href="#" class="nav-item nav-link">Logout</a>
+        </div>
+    </div>
+</nav>
+<!-- Navbar End -->
+
+
+<!-- Error Messages Here (Empty) -->
+
+
+<!-- Edit Post Start -->
+<div class="container mt-5" style="margin-bottom: 200px">
+    <a href="{{ url()->previous() }}" class="btn btn-outline-primary mb-3"><i class="fas fa-arrow-left me-2"></i>Return</a>
+    <h2 style="margin-bottom: 2rem">Edit Your Post</h2>
+
+    <form method= "post" action = "{{route('posts.update', ['post' => $post])}}">
+        @csrf
+        @method('put')
+
+        {{-- Form fields --}}
+        <div class="mb-3">
+            <label for="postTitle" class="form-label"><b>Post Title</b></label>
+            <input type="text" class="form-control" id="postTitle" name="title" placeholder="Enter post title" required value="{{$post->title}}">
+        </div>
+        <div class="mb-3">
+            <label for="postBody" class="form-label"><b>Post Content</b></label>
+            <textarea class="form-control" id="postBody" name="body" rows="5" placeholder="Enter post content" required>{{ strip_tags($post->body) }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="postStatus" class="form-label"><b>Post Status</b></label>
+            <select class="form-select" id="postStatus" name="status">
+                <option value="{{$post->status}}">{{$post->status}}</option>
+                <option value="Active">ACTIVE</option>
+                <option value="Inactive">INACTIVE</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="postCategory" class="form-label"><b>Post Category</b></label>
+            <select class="form-select" id="postCategory" name="category_id" required>
+                <option value="{{$post->category->id}}">{{$post->category->name}}</option>
+                @foreach($categories as $category)
+                    <option value="{{$category->id}}">{{$category->name}}</option>
+                @endforeach
+            </select>
+        </div>
+        <input type="submit" class="btn btn-primary" value="Update"></input>
+    </form>
+</div>
+<!-- Edit Post End -->
+
+
+
+
+<!-- Footer Start -->
+<div class="container-fluid bg-dark footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container py-5">
+        <div class="row g-5">
+            <div class="col-md-6">
+                <h1 class="text-white mb-4"><img class="img-fluid me-3" src="img/icon/icon-00-logo-light.png" alt="">BRIDGES</h1>
+                <span> Introduced in 2019, started up as a small business that advertised jobs to the population of Maldives.
+                        Now it has grown since and has become a market that connects people who are skilled workers with the people that need day-to-day services.</span>
+            </div>
+            <div class="col-md-6">
+                <h5 class="text-light mb-4">Newsletter</h5>
+                <p>Subscribe to our Newsletter.</p>
+                <div class="position-relative">
+                    <input class="form-control bg-transparent w-75 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                    <button type="button" class="btn btn-primary py-2 px-3 position-absolute top-0 end-0 mt-2 me-2">Sign Up</button>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h5 class="text-light mb-4">Get In Touch</h5>
+                <p><i class="fa fa-map-marker-alt me-3"></i>H. Orchid, 402 Ameenee Magu, Malé</p>
+                <p><i class="fa fa-phone-alt me-3"></i>+960 332-3902</p>
+                <p><i class="fa fa-envelope me-3"></i>info@bridges.com.mv</p>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h5 class="text-light mb-4">Our Services</h5>
+                <a class="btn btn-link" href="">Become a Job Seeker</a>
+                <a class="btn btn-link" href="">Become a Job Poster</a>
+                <a class="btn btn-link" href="">Administrative</a>
+                <a class="btn btn-link" href="">Categories</a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h5 class="text-light mb-4">Quick Links</h5>
+                <a class="btn btn-link" href="">About Us</a>
+                <a class="btn btn-link" href="contact.html">Contact Us</a>
+                <a class="btn btn-link" href="">Services</a>
+                <a class="btn btn-link" href="">Terms & Conditions</a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h5 class="text-light mb-4">Follow Us</h5>
+                <div class="d-flex">
+                    <a class="btn btn-square rounded-circle me-1" href=""><i class="fab fa-twitter"></i></a>
+                    <a class="btn btn-square rounded-circle me-1" href=""><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-square rounded-circle me-1" href=""><i class="fab fa-youtube"></i></a>
+                    <a class="btn btn-square rounded-circle me-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid copyright">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    &copy; <a href="#">BRIDGES 2024</a>, All Right Reserved.
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+                    <!-- Designed By <a href="https://htmlcodex.com">HTML Codex</a> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Footer End -->
+
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/wow/wow.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/waypoints/waypoints.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="lib/counterup/counterup.min.js"></script>
+<script src="lib/parallax/parallax.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
+
+</body>
+</html>

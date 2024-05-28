@@ -1,131 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	{{-- Include meta tags --}}
-	@include('posts.layouts.meta')
-	
-    @include('posts.layouts.bootstrap')
-        {{-- Bootstrap 5.3.3 & Icons --}}
-        {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"> --}}
 
-	{{-- Include CSS Styles --}}
-	@include('posts.layouts.styles')
+    @include('posts.layouts.head')
 
-
-    <title>Create a Post - BRIDGES</title>
+    <title>BRIDGES - My Posts</title>
 
 </head>
 
-
 <body>
 
-    {{-- Include Navbar --}}
-    @include ('posts.layouts.navbar')
+    @include('posts.layouts.navbar')
 
 
-
-
-    {{-- Create Post Section --}}
-    <section>
-        <div class="container">
-            <div class="row justify-content-center align-items-center border">
-                <div class="col-md-6 text-center">
-                    <button class="btn btn-primary" style="background-color: #73a5fc" onclick="redirectToCreatePostPage()">Create Your Task</button>
-                </div>
+<!-- {{-- Create Post Section Start --}} -->
+<section class="mt-5">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-md-6 text-center">
+                <a href="{{ route('posts.addpost') }}" class="btn btn-primary" style="box-shadow: 0px 12px 12px 0px rgba(0, 0.5, 0.1, 0.1);""> <i class="fa fa-plus" aria-hidden="true"></i>  Create Post </a>
             </div>
         </div>
-    </section>
-
-    {{-- Success Message on Edit --}}
-    @if (session('success'))
-    <div class="alert alert-success alert-dismissible fixed-top w-100" role="alert" id="successAlert">
-        {{ session('success') }}
-
     </div>
-    <script>
-        // Automatically close the alert after 5 seconds
-        setTimeout(function() {
-            document.getElementById('successAlert').style.display = 'none';
-        }, 3000); // Adjust the time as needed (in milliseconds)
-    </script>
-    @endif
-
-    {{-- Error Message on Un-Authenticated User Edit --}}
-    @if (session('error'))
-    <div class="alert alert-danger alert-dismissible fixed-top w-100" role="alert" id="error">
-        {{ session('error') }}
-
-    </div>
-    <script>
-        // Automatically close the alert after 5 seconds
-        setTimeout(function() {
-            document.getElementById('error').style.display = 'none';
-        }, 3000); // Adjust the time as needed (in milliseconds)
-    </script>
-    @endif
+</section>
+<!-- {{-- Create Post Section End--}} -->
 
 
-    {{-- Displayed Posts Section --}}
-    <section>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-10 offset-md-1">
-                    <div><h2>Your Active Posts</h2></div>
-                    <ul class="job-list">
+{{-- Displayed Posts Section --}}
+<section>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-10 offset-md-1">
+                <h2 class="card-title">Your Posts</h2>
+                <hr>
+                <br>
+
+                <div class="card-body">
+                    @if ($posts->isEmpty())
+                        <div class="text-center mt-3" style="margin-bottom: 60vh">
+                            <p class="fs-4">You have not created any Post</p>
+                        </div>
+                    @else
+
                         @foreach ($posts as $post)
-                        {{-- Check if the author_id of the post matches the ID of the authenticated user --}}
                         @if ($post->author_id == auth()->id())
-                        <li class="job-preview">
-                            <div class="content">
-                                <h4 class="job-title">
-                                    {{ $post->title }}
-                                </h4>
-                                <h5 class="company">
-                                    Published by: You
-                                    ( {{ strip_tags($post->author->name) }} )
-                                </h5>
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                {{-- Title --}}
+                                <h4 class="card-title">{{ $post->title }}</h4>
+                                {{-- Published by --}}
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    Published by: <a href="{{ route('profile.view.poster', ['postId' => $post->author_id]) }}">{{ strip_tags($post->author->name) }}</a>
+                                </h6>
+                                <br><br>
                                 {{-- Body --}}
-                                <h6> {{ strip_tags($post->body) }} </h6>    
-                                <h6>Category: {{ $post->category->name}}</h6>
-                                <p>Status: {{ $post->status }}</p>
-                                <hr>
-                                <br>
-                                <p>Created Date: {{ $post->created_at }}</p>
-                            </div>
+                                <p class="card-text">{{ strip_tags($post->body) }}</p>
+                                <br><br>
+                                {{-- Category --}}
+                                <p class="card-text"><strong>Category: <span style="font-weight: normal;">{{ $post->category->name }}</span></strong></p>
+                                {{-- Status --}}
+                                <p class="card-text"><strong>Status: <span style="font-weight: normal;">{{ $post->status }}</span></strong></p>
+                                <hr class="my-2">
+                                {{-- Created Date --}}
+                                <p class="card-text"><strong>Created Date: {{ $post->created_at }}</strong></p>
 
-                            <div class="buttons float-md-start">
-                                <a href="{{ route('posts.view', ['postId' => $post->id]) }}" class="btn btn-apply">View</a>
-                            </div>
-                    
-                            {{-- Edit & Delete Form  --}}
-                            <div class="buttons float-md-end">
-                                
-                                <a href="{{route('posts.edit', ['post' => $post])}}" class="btn btn-apply">Edit</a>
-                                
-                                <form id="deleteForm{{$post->id}}" method="post" action="{{route('posts.destroy', ['post' => $post ])}}" class="d-inline-block">
-                                    @csrf
-                                    @method('delete')
-                                    <button type="button" onclick="confirmDelete({{$post->id}})" class="btn btn-apply">Delete</button>
-                                </form>
-                            </div>
+                                {{-- Buttons --}}
+                                {{-- View Post Detail Button --}}
+                                <div class="buttons float-md-start mt-4">
+                                    <a href="{{ route('posts.view', ['postId' => $post->id]) }}" class="btn btn-primary">View</a>
+                                </div>
+
+                                {{-- View Profile Button - DISCARDED --}}
+                                {{-- <div class="buttons float-md-start mt-4 ms-2">
+                                    <a href="{{ route('profile.view.poster', ['postId' => $post->author_id]) }}" class="btn btn-primary me-2">View Profile</a>
+                                </div> --}}
+
+                                {{-- Edit / Delete Post Button --}}
+                                <div class="buttons float-md-end mt-4">
+
+                                    {{-- Edit Button --}}
+                                    <a href="{{route('posts.edit', ['post' => $post])}}" class="btn btn-warning me-1">Edit</a>
+                                    
+                                    {{-- Delete Form --}}
+                                    <form id="deleteForm{{$post->id}}" method="post" action="{{route('posts.destroy', ['post' => $post ])}}" class="d-inline-block">
+                                        @csrf
+                                        @method('delete')
+                                        <button type="button" onclick="confirmDelete({{$post->id}})" class="btn btn-danger">Delete</button>
+                                    </form>
+                                    
+                                </div>
+
                                 <div class="clearfix"></div>
-                            </li>
+
+                            </div>
+                        </div>
                         @endif
-                    @endforeach
-                    
-                    </ul>
+                        @endforeach
+                    @endif
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+{{-- End Displayed Posts --}}
 
-    {{-- Include Footer --}}
-    @include ('posts.layouts.footer')
+
+@include('posts.layouts.footer')
 
 
-    {{-- Include Scripts --}}
-    @include ('posts.layouts.scripts')
+@include('posts.layouts.scripts')
+
+{{-- Additional JavaScript --}}
+<script>
+    function confirmDelete(postId) {
+    if (confirm("Are you sure you want to delete this post?")) {
+        document.getElementById('deleteForm' + postId).submit();
+    }
+}
+</script>
 
 </body>
 </html>

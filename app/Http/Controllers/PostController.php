@@ -14,10 +14,13 @@ class PostController extends Controller
     public function index()
     {
         // Retrieve categories associated with posts
-        $categories = Category::whereHas('posts')->get();
+        // $categories = Category::whereHas('posts')->get();
+
+        // Retrieve categories for all posts with posts
+        $categories = $this->showHeader();
     
         // Retrieve all posts from Voyager's `posts` table using the Post model
-        $posts = Post::with('category')->get(); // Retrieve Category Name instead of ID
+        $posts = Post::with('category')->paginate(10); // Retrieve Category Name instead of ID
     
         // Role_id 3 = poster; Role_id 4 = seeker
 
@@ -30,7 +33,7 @@ class PostController extends Controller
         $categories = Category::whereHas('posts')->get();
     
         // Retrieve all posts from Voyager's `posts` table using the Post model
-        $posts = Post::with('category')->get(); // Retrieve Category Name instead of ID
+        $posts = Post::with('category')->paginate(10); // Retrieve Category Name instead of ID
 
         // Retrieve notifications for the authenticated user
         $notifications = Auth::user()->notifications;
@@ -52,7 +55,10 @@ class PostController extends Controller
         // Retrieve categories associated with posts
         $categories = Category::whereHas('posts')->get();
 
-    //    dd($categories);
+        // Retrieve all categories
+        // $categories = Category::all();
+
+        return $categories;
     }
 
 
@@ -72,7 +78,7 @@ class PostController extends Controller
 
         $newPost = Post::create($data);
 
-        return redirect(route('posts.index'))->with('success','Post has been added!');
+        return redirect(route('posts.myposts'))->with('success','Post has been added!');
     }
 
     public function add()
@@ -136,7 +142,7 @@ class PostController extends Controller
 
         // Delete Post
         $post->delete();
-        return redirect(route('posts.index'))->with('success', 'Post Deleted Successfully!');
+        return redirect(route('posts.myposts'))->with('success', 'Post Deleted Successfully!');
     }
 
     public function view($postId)  // View a selected post from Poster Dashboard

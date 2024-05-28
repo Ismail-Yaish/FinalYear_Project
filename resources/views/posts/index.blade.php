@@ -1,120 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	{{-- Include meta tags --}}
-	@include('posts.layouts.meta')
-	
-    @include ('posts.layouts.bootstrap')
 
-	{{-- Include CSS Styles --}}
-	@include('posts.layouts.styles')
-
-
-    <title>Create a Post - BRIDGES</title>
+    @include('posts.layouts.head')
+    
+    <title>BRIDGES - Poster Dashboard</title>
 
 </head>
 
 
 <body>
 
-    {{-- Include Navbar --}}
-    @include ('posts.layouts.navbar')
-
-    {{-- Include Header --}}
-    @include ('posts.layouts.header')
+    @include('posts.layouts.navbar')
+    
+    @include('posts.layouts.header')
 
 
-    {{-- Create Post Section --}}
-    <section>
-        <div class="container">
-            <div class="row justify-content-center align-items-center border">
-                <div class="col-md-6 text-center">
-                    <button class="btn btn-primary" style="background-color: #73a5fc" onclick="redirectToCreatePostPage()">Create Your Task</button>
-                </div>
+<!-- {{-- Create Post Button Start --}} -->
+<section class="mt-5 mb-5">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-md-6 text-center">
+                <a href="{{ route('posts.addpost') }}" class="btn btn-primary" style="box-shadow: 0px 12px 12px 0px rgba(0, 0.5, 0.1, 0.1);""> <i class="fa fa-plus" aria-hidden="true"></i> Post Your Task </a>
             </div>
         </div>
-    </section>
-
-    {{-- Success Message on Edit --}}
-    @if (session('success'))
-    <div class="alert alert-success alert-dismissible fixed-top w-100" role="alert" id="successAlert">
-        {{ session('success') }}
-
     </div>
-    <script>
-        // Automatically close the alert after 5 seconds
-        setTimeout(function() {
-            document.getElementById('successAlert').style.display = 'none';
-        }, 3000); // Adjust the time as needed (in milliseconds)
-    </script>
-    @endif
-
-    {{-- Error Message on Un-Authenticated User Edit --}}
-    @if (session('error'))
-    <div class="alert alert-danger alert-dismissible fixed-top w-100" role="alert" id="error">
-        {{ session('error') }}
-
-    </div>
-    <script>
-        // Automatically close the alert after 5 seconds
-        setTimeout(function() {
-            document.getElementById('error').style.display = 'none';
-        }, 3000); // Adjust the time as needed (in milliseconds)
-    </script>
-    @endif
+</section>
+<!-- {{-- Create Post Button End--}} -->
 
 
-    {{-- Displayed Posts Section --}}
-    <section>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-10 offset-md-1">
-                    <div><h2>Current Active Posts</h2></div>
-                    <ul class="job-list">
+{{-- Displayed Posts Section --}}
+<section id="posts-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 offset-md-1 mt-4">
+                <h2 class="card-title">Current Active Posts</h2>
+                <hr>
+                    {{-- Pagination Links --}}
+                    <div id="pagination-links" class="d-flex justify-content-end pagination-links">
+                        {{ $posts->links() }}
+                    </div>
+                <br>
+
+                {{-- Posts Container --}}
+                <div id="posts-container">
+                    <div class="card-body">
                         @foreach ($posts as $post)
-                        <li class="job-preview">
-                            <div class="content">
-                                <h4 class="job-title">
-                                    {{ $post->title }}
-                                </h4>
-                                <h5 class="company">
-                                Published by: <a href="{{ route('profile.view.poster', ['postId' => $post->author_id]) }}"> {{ strip_tags($post->author->name) }} </a>
-                                </h5>
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                {{-- Title --}}
+                                <h4 class="card-title">{{ $post->title }}</h4>
+                                {{-- Published by --}}
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    Published by: <a href="{{ route('profile.view.poster', ['postId' => $post->author_id]) }}">{{ strip_tags($post->author->name) }}</a>
+                                </h6>
+                                <br><br>
                                 {{-- Body --}}
-                                <h6> {{ strip_tags($post->body) }} </h6>    
-                                <h6>Category: {{ $post->category->name}}</h6>
-                                <p>Status: {{ $post->status }}</p>
-                                <hr>
-                                <br>
-                                <p>Created Date: {{ $post->created_at }}</p>
-                            </div>
+                                <p class="card-text">{{ strip_tags($post->body) }}</p>
+                                <br><br>
+                                {{-- Category --}}
+                                <p class="card-text"><strong>Category: <span style="font-weight: normal;">{{ $post->category->name }}</span></strong></p>
+                                {{-- Status --}}
+                                <p class="card-text"><strong>Status: <span style="font-weight: normal;">{{ $post->status }}</span></strong></p>
+                                <hr class="my-2">
+                                {{-- Created Date --}}
+                                <p class="card-text"><strong>Created Date: {{ $post->created_at }}</strong></p>
 
-                            {{-- Buttons --}}
-                            <div class="buttons float-md-end">
-                                
-                                <a href="{{ route('profile.view.poster', ['postId' => $post->author_id]) }}" class="btn btn-apply"> View Profile </a>
-                                {{-- Fake Like Button --}}
-                                <a href="#" class="btn btn-apply">Like <i class="fa-solid fa-heart"></i></a>
-                                
+                                {{-- Buttons --}}
+
+                                <div class="buttons float-md-end mt-4">
+                                    {{-- View Poster Profile Button --}}
+                                    <a href="{{ route('profile.view.poster', ['postId' => $post->author_id]) }}" class="btn btn-primary me-2">View Profile</a>
+                                    {{-- Fake Like Button --}}
+                                    <a href="#" class="btn btn-outline-danger">Like <i class="fas fa-heart"></i></a>
+                                </div>
+
+                                {{-- View Post Detail Button --}}
+                                <div class="buttons float-md-start mt-4">
+                                    <a href="{{ route('posts.view', ['postId' => $post->id]) }}" class="btn btn-primary">View</a>
+                                </div>
+
+                                <div class="clearfix"></div>
+                                <div class="float-md-end mt-3"><p style="font-size: 12px">[If you would like to edit your own post go to MY POSTS]</p></div>
                             </div>
-                            
-                            <div class="clearfix"></div>
-                            <div class="float-md-end"><p style="font-size: 12px">[If you would like to edit your own post go to MY POSTS]</p></div>
-                        </li>
-                        
+                        </div>
                         @endforeach
-                    </ul>
+                    </div>
                 </div>
+
+                    <div id="loader" style="display: none; text-align: center;">Loading...</div>
+
             </div>
         </div>
-    </section>
+    </div>
+</section>
+{{-- End Displayed Posts --}}
 
-    {{-- Include Footer --}}
-    @include ('posts.layouts.footer')
+
+    @include('posts.layouts.footer')
+
+    @include('posts.layouts.scripts')
 
 
-    {{-- Include Scripts --}}
-    @include ('posts.layouts.scripts')
+    
+
 
 </body>
 </html>
