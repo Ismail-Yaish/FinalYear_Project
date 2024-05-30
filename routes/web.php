@@ -72,13 +72,6 @@ Route::group(['prefix' => 'admin/dashboard'], function () {
 });
 });
 
-/* ROLES:
-1 : Admin
-2: Normal User / Agent
-3: Poster
-4: Seeker
-*/
-
 //Test Route Dashboard 
 // Route::middleware(['auth','role:1'])->group(function () {
 //     // Routes accessible only to users with role_id 1 (admin)
@@ -88,8 +81,15 @@ Route::group(['prefix' => 'admin/dashboard'], function () {
 // });
 
 
+/* ROLES:
+1 : Admin
+2: Normal User / Agent
+3: Poster
+4: Seeker
+*/
+
 # Posts - Poster Dashboard
-Route::middleware(['auth', 'role:1,2,3'])->group(function () {
+Route::middleware(['auth', 'role:1,3'])->group(function () {
     Route::get('/posts', 'App\Http\Controllers\PostController@index')->name('posts.index');
     // Route::get('/posts', 'App\Http\Controllers\PostController@showHeader')->name('show.header');   //Categories in Header
 
@@ -163,13 +163,11 @@ Route::middleware(['auth', 'role:1,2,3'])->group(function () {
     Route::get('/posts/ratings/{seeker}', [RatingController::class, 'show'])->name('posts.ratings.show');
 
 
-
-
 });
 
 
 # Seeker Dashboard
-Route::middleware(['auth', 'role:1,4'])->group(function () {
+Route::middleware(['auth', 'role:1,2,4'])->group(function () {
 
     Route::get('/seeker/dashboard', 'App\Http\Controllers\PostController@seeker')->name('seeker.dashboard');
         // return view('seeker.dashboard');
@@ -239,14 +237,16 @@ Route::middleware(['auth', 'role:1,4'])->group(function () {
     # Notifications - Mark individual notification as READ
     Route::get('/seeker/notifications/markAsRead/{id}', [NotificationController::class, 'seekerMarkIndividualNotificationAsRead'])->name('seeker.notifications.markAsReadIndividual');
 
+
+
     // Add-Skills Navigation
     Route::get('/seeker/add-skills', function () {
         return view('seeker.addskills');
     })->middleware(['auth', 'verified'])->name('seeker.add-skills');    
 
-        # RATINGS
-        // Route::post('ratings/{seeker}', [RatingController::class, 'store'])->name('posts.ratings.store');
-        Route::get('/seeker/ratings/{seeker}', [RatingController::class, 'show_ratings_seeker'])->name('seeker.ratings.show');
+    # RATINGS
+    // Route::post('ratings/{seeker}', [RatingController::class, 'store'])->name('posts.ratings.store');
+    Route::get('/seeker/ratings/{seeker}', [RatingController::class, 'show_ratings_seeker'])->name('seeker.ratings.show');
         
 });
 
