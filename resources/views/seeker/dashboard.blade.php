@@ -50,7 +50,7 @@
                                 <h4 class="card-title">{{ $post->title }}</h4>
                                 {{-- Published by --}}
                                 <h6 class="card-subtitle mb-2 text-muted">
-                                    Published by: <a href="{{ route('profile.view.seeker', ['postId' => $post->author_id]) }}">{{ strip_tags($post->author->name) }}</a>
+                                    Published by: <a href="{{ route('profile.view', ['postId' => $post->author_id]) }}">{{ strip_tags($post->author->name) }}</a>
                                 </h6>
                                 <br><br>
                                 {{-- Body --}}

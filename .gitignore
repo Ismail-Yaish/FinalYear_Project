@@ -17,3 +17,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+Default_Login_Creds.txt
+vendor_installations.txt
